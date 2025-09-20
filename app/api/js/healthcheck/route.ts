@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
-  return NextResponse.json({ message: "Hello from Next.js 14" });
+  return NextResponse.json({ status: "OK", timestamp: new Date().toISOString() });
 }
