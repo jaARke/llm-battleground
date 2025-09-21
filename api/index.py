@@ -1,9 +1,8 @@
-from datetime import datetime
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from .routes.users import router as users_router
-from .models import HealthCheckResponse
+from .routes.health import health_router
+from .routes.users import users_router
 
 # Create FastAPI instance with custom docs and openapi url
 app = FastAPI(
@@ -17,7 +16,11 @@ app = FastAPI(
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "https://llmbattles.jakerichard.tech"],
+    allow_origins=[
+        "http://localhost:3000",
+        "https://staging.llmbattles.jakerichard.tech",
+        "https://llmbattles.jakerichard.tech",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -25,11 +28,4 @@ app.add_middleware(
 
 # Include routers
 app.include_router(users_router)
-
-
-@app.get("/api/py/healthcheck", response_model=HealthCheckResponse, tags=["health"])
-async def healthcheck():
-    """
-    Health check endpoint to verify API is running.
-    """
-    return HealthCheckResponse(status="OK", timestamp=datetime.utcnow())
+app.include_router(health_router)

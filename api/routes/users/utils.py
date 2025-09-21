@@ -1,7 +1,8 @@
 import os
 from typing import Optional
-from fastapi import HTTPException, Depends, status
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+
+from fastapi import Depends, HTTPException, status
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import JWTError, jwt
 
 # JWT Configuration

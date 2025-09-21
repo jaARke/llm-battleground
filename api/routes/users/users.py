@@ -1,7 +1,9 @@
 from datetime import datetime
+
 from fastapi import APIRouter, Depends
-from ..auth import get_current_user, User
-from ..models import ProtectedResponse, UserResponse
+
+from .models import ProtectedResponse, UserResponse
+from .utils import User, get_current_user
 
 router = APIRouter(prefix="/api/py", tags=["users"])
 

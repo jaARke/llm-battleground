@@ -1,5 +1,6 @@
 from datetime import datetime
 from typing import Optional
+
 from pydantic import BaseModel
 
 
@@ -20,18 +21,3 @@ class ProtectedResponse(BaseModel):
     message: str
     user: UserResponse
     timestamp: datetime
-
-
-class HealthCheckResponse(BaseModel):
-    """Response model for health check"""
-
-    status: str
-    timestamp: datetime
-
-
-class ErrorResponse(BaseModel):
-    """Response model for errors"""
-
-    detail: str
-    status_code: int
-    timestamp: datetime = datetime.utcnow()
