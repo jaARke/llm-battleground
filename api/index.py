@@ -1,8 +1,16 @@
+from pathlib import Path
+
+from dotenv import load_dotenv
+
+# Load the dev environment variables if possible
+# In production, these should be set in the environment directly
+load_dotenv(dotenv_path=Path(__file__).parent.parent / ".env.local")
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .routes.health import health_router
-from .routes.users import users_router
+from .routes.protected import protected_router
 
 # Create FastAPI instance with custom docs and openapi url
 app = FastAPI(
@@ -27,5 +35,5 @@ app.add_middleware(
 )
 
 # Include routers
-app.include_router(users_router)
 app.include_router(health_router)
+app.include_router(protected_router)

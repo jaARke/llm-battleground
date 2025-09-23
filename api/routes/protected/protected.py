@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends
 from .models import ProtectedResponse, UserResponse
 from .utils import User, get_current_user
 
-router = APIRouter(prefix="/api/py", tags=["users"])
+router = APIRouter(prefix="/api/py", tags=["protected"])
 
 
 @router.get("/protected", response_model=ProtectedResponse)
