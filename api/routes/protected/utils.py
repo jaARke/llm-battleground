@@ -29,6 +29,9 @@ async def verify_token(
     try:
         token = credentials.credentials
 
+        print("Verifying token:", token)  # Debugging line
+        print("Using JWT_SECRET:", JWT_SECRET)  # Debugging line
+
         # Decode the JWT token using the same secret as NextAuth
         payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
 

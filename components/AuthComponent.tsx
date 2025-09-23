@@ -2,10 +2,24 @@
 
 import { useState } from 'react'
 import { signIn, signOut, useSession } from 'next-auth/react'
+import apiClient from '@/lib/apiClient'
+
+interface ProtectedResponse {
+  message: string
+  user: {
+    user_id: string
+    username: string
+    email: string
+  }
+  timestamp: string
+}
 
 export default function AuthComponent() {
   const { data: session, status } = useSession()
   const [isLoading, setIsLoading] = useState('')
+  const [apiResponse, setApiResponse] = useState<ProtectedResponse | null>(null)
+  const [apiError, setApiError] = useState<string | null>(null)
+  const [isApiLoading, setIsApiLoading] = useState(false)
 
   const handleSocialSignIn = async (provider: string) => {
     setIsLoading(provider)
@@ -19,7 +33,32 @@ export default function AuthComponent() {
   }
 
   const handleSignOut = async () => {
+    // Clear API response when signing out
+    setApiResponse(null)
+    setApiError(null)
     await signOut({ redirect: false })
+  }
+
+  const testProtectedEndpoint = async () => {
+    setIsApiLoading(true)
+    setApiError(null)
+    setApiResponse(null)
+
+    try {
+      const response = await apiClient.get('/api/py/protected')
+      setApiResponse(response.data)
+    } catch (error: any) {
+      console.error('Protected endpoint error:', error)
+      if (error.response) {
+        setApiError(`Error ${error.response.status}: ${error.response.data?.detail || error.response.statusText}`)
+      } else if (error.request) {
+        setApiError('Network error - could not reach the server')
+      } else {
+        setApiError(error.message || 'An unexpected error occurred')
+      }
+    } finally {
+      setIsApiLoading(false)
+    }
   }
 
   if (status === 'loading') {
@@ -44,12 +83,41 @@ export default function AuthComponent() {
         
         <div className="space-y-3">
           <button
+            onClick={testProtectedEndpoint}
+            disabled={isApiLoading}
+            className="w-full bg-blue-500 hover:bg-blue-600 disabled:bg-blue-300 text-white font-medium py-2 px-4 rounded transition-colors"
+          >
+            {isApiLoading ? 'Testing...' : 'Test Protected Endpoint'}
+          </button>
+
+          <button
             onClick={handleSignOut}
             className="w-full bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded transition-colors"
           >
             Sign Out
           </button>
         </div>
+
+        {/* API Response Display */}
+        {(apiResponse || apiError) && (
+          <div className="mt-4">
+            {apiError && (
+              <div className="p-3 bg-red-50 border border-red-200 rounded">
+                <h3 className="font-semibold text-red-800 mb-2">Error:</h3>
+                <p className="text-red-600 text-sm">{apiError}</p>
+              </div>
+            )}
+            
+            {apiResponse && (
+              <div className="p-3 bg-gray-50 border border-gray-200 rounded">
+                <h3 className="font-semibold text-gray-800 mb-2">API Response:</h3>
+                <pre className="text-xs text-gray-600 overflow-x-auto whitespace-pre-wrap">
+                  {JSON.stringify(apiResponse, null, 2)}
+                </pre>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     )
   }
