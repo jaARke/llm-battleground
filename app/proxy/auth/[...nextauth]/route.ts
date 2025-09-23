@@ -1,28 +1,32 @@
-import NextAuth, { NextAuthOptions } from "next-auth"
-import GoogleProvider from "next-auth/providers/google"
-import GitHubProvider from "next-auth/providers/github"
-import DiscordProvider from "next-auth/providers/discord"
-import { SignJWT } from "jose"
+import NextAuth, { NextAuthOptions } from 'next-auth'
+import GoogleProvider from 'next-auth/providers/google'
+import GitHubProvider from 'next-auth/providers/github'
+import DiscordProvider from 'next-auth/providers/discord'
+import { SignJWT } from 'jose'
 
 const NEXTAUTH_SESSION_MAX_AGE = 60 * 60 * 24 * 30 // 30 days
 const BACKEND_TOKEN_MAX_AGE = 60 * 60 * 2 // 2 hours
 const BACKEND_TOKEN_REFRESH_BUFFER = 5 * 60 // 5 minutes
 
-async function mintBackendToken(claims: { sub?: string; email?: string; name?: string }) {
-  const now = Math.floor(Date.now() / 1000);
-  const exp = now + BACKEND_TOKEN_MAX_AGE;
+async function mintBackendToken(claims: {
+  sub?: string
+  email?: string
+  name?: string
+}) {
+  const now = Math.floor(Date.now() / 1000)
+  const exp = now + BACKEND_TOKEN_MAX_AGE
 
   const token = await new SignJWT({
     sub: claims.sub,
     email: claims.email,
     name: claims.name,
   })
-    .setProtectedHeader({ alg: "HS256" })
+    .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt(now)
     .setExpirationTime(exp)
-    .sign(new TextEncoder().encode(process.env.NEXTAUTH_SECRET!));
+    .sign(new TextEncoder().encode(process.env.NEXTAUTH_SECRET!))
 
-  return { token, exp };
+  return { token, exp }
 }
 
 const authOptions: NextAuthOptions = {
@@ -38,10 +42,10 @@ const authOptions: NextAuthOptions = {
     DiscordProvider({
       clientId: process.env.DISCORD_CLIENT_ID!,
       clientSecret: process.env.DISCORD_CLIENT_SECRET!,
-    })
+    }),
   ],
   session: {
-    strategy: "jwt",
+    strategy: 'jwt',
     maxAge: NEXTAUTH_SESSION_MAX_AGE,
   },
   callbacks: {
@@ -51,26 +55,29 @@ const authOptions: NextAuthOptions = {
         token.sub = user.id
         token.email = user.email
         token.name = user.name
-        
-        const { token: t, exp } = await mintBackendToken(token);
+
+        const { token: t, exp } = await mintBackendToken(token)
         token.backendToken = t
         token.backendTokenExpiry = exp
       }
       // Pre-existing access
       // Check if backend token needs refresh (with buffer)
-      const shouldRefresh = !token.backendTokenExpiry ||
-        Date.now() > (token.backendTokenExpiry as number) - (BACKEND_TOKEN_REFRESH_BUFFER * 1000)
+      const shouldRefresh =
+        !token.backendTokenExpiry ||
+        Date.now() >
+          (token.backendTokenExpiry as number) -
+            BACKEND_TOKEN_REFRESH_BUFFER * 1000
 
       if (shouldRefresh && token.sub) {
         // Refresh the backend token
-        const { token: t, exp } = await mintBackendToken(token);
+        const { token: t, exp } = await mintBackendToken(token)
         token.backendToken = t
         token.backendTokenExpiry = exp
       }
-      
+
       return token
     },
-    
+
     async session({ session, token }) {
       if (token) {
         session.user = {

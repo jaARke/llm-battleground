@@ -8,5 +8,5 @@ interface AuthProviderProps {
 }
 
 export default function AuthProvider({ children }: AuthProviderProps) {
-  return <SessionProvider basePath='/proxy/auth'>{children}</SessionProvider>
+  return <SessionProvider basePath="/proxy/auth">{children}</SessionProvider>
 }
