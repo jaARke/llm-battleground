@@ -1,59 +1,82 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import AuthComponent from '../components/AuthComponent'
+import { useState } from 'react'
+import ProtectedRoute from '@/components/ProtectedRoute'
+import fastApiClient from '@/lib/fastApiClient'
+
+type ProtectedResponse = {
+  message: string
+  user: {
+    user_id: string
+    username: string
+    email: string
+  }
+  timestamp: string
+}
 
 export default function Home() {
-  const [displayText, setDisplayText] = useState('')
-  const [showSubtext, setShowSubtext] = useState(false)
-  const fullText = 'LLM Battleground'
+  const [isTesting, setIsTesting] = useState(false)
+  const [result, setResult] = useState<ProtectedResponse | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    let index = 0
-    const timer = setInterval(() => {
-      if (index < fullText.length) {
-        setDisplayText(fullText.slice(0, index + 1))
-        index++
-      } else {
-        clearInterval(timer)
-        // Show subtext after main text is complete
-        setTimeout(() => setShowSubtext(true), 500)
-      }
-    }, 100) // 100ms delay between characters
+  const testProtectedEndpoint = async () => {
+    setIsTesting(true)
+    setError(null)
+    setResult(null)
 
-    return () => clearInterval(timer)
-  }, [])
+    try {
+      const response = await fastApiClient.get<ProtectedResponse>('/protected')
+      setResult(response.data)
+    } catch (err: unknown) {
+      console.error('Protected endpoint error:', err)
+      setError('Unable to reach the protected endpoint. Please try again later.')
+    } finally {
+      setIsTesting(false)
+    }
+  }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-start bg-gray-50 dark:bg-gray-900 p-4 pt-32">
-      <div className="flex flex-col items-center space-y-8">
-        {/* Construction emoji */}
-        <div className="text-8xl">🚧</div>
+    <ProtectedRoute>
+      <main className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 flex items-center justify-center px-6 py-12">
+        <div className="w-full max-w-3xl mx-auto bg-white/85 dark:bg-gray-900/85 backdrop-blur rounded-3xl shadow-xl border border-gray-200/70 dark:border-gray-800/70 p-10 md:p-14 space-y-10">
+          <header className="space-y-4 text-center">
+            <p className="text-sm uppercase tracking-[0.35em] text-blue-500 dark:text-blue-400">
+              LLM Battleground
+            </p>
+            <h1 className="text-4xl font-semibold text-gray-900 dark:text-gray-100">
+              Welcome to the operations hub
+            </h1>
+            <p className="text-base md:text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+              Launch a quick systems check to confirm your access to protected LLM battle
+              services.
+            </p>
+          </header>
 
-        {/* Main title with typewriter effect */}
-        <div className="text-center space-y-4">
-          <h1 className="text-4xl font-bold text-gray-800 dark:text-gray-100">
-            {displayText}
-            <span className="animate-pulse">|</span>
-          </h1>
-          <div className="h-14 flex items-center justify-center">
-            {showSubtext && (
-              <p className="text-lg text-gray-600 dark:text-gray-300 animate-fade-in">
-                This site is under construction. Check back soon!
-              </p>
+          <div className="space-y-6">
+            <button
+              type="button"
+              onClick={testProtectedEndpoint}
+              disabled={isTesting}
+              className="relative w-full flex items-center justify-center gap-3 rounded-2xl px-6 py-4 text-base font-semibold tracking-wide text-white transition bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-600 hover:to-purple-500 disabled:opacity-70 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
+            >
+              {isTesting ? 'Running secure systems check…' : 'Test protected endpoint'}
+            </button>
+
+            {error && (
+              <p className="text-sm text-center text-red-600 dark:text-red-400">{error}</p>
+            )}
+
+            {result && (
+              <div className="bg-gray-900/90 text-gray-100 rounded-2xl p-6 space-y-2 shadow-inner border border-gray-800">
+                <p className="text-sm uppercase tracking-widest text-blue-300">Protected response</p>
+                <pre className="text-xs md:text-sm overflow-x-auto whitespace-pre-wrap">
+                  {JSON.stringify(result, null, 2)}
+                </pre>
+              </div>
             )}
           </div>
         </div>
-
-        {/* Authentication component for testing */}
-        <div className="w-full max-w-md min-h-[200px] flex items-start justify-center">
-          {showSubtext && (
-            <div className="w-full animate-fade-in">
-              <AuthComponent />
-            </div>
-          )}
-        </div>
-      </div>
-    </main>
+      </main>
+    </ProtectedRoute>
   )
 }

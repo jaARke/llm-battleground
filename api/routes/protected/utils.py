@@ -6,7 +6,7 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import JWTError, jwt
 
 # JWT Configuration
-JWT_SECRET = os.getenv("NEXTAUTH_SECRET", "your-secret-key-here")
+JWT_SECRET = os.getenv("NEXTAUTH_SECRET", None)
 JWT_ALGORITHM = "HS256"
 
 # Security scheme
@@ -26,11 +26,13 @@ class User:
 async def verify_token(
     credentials: HTTPAuthorizationCredentials = Depends(security),
 ) -> User:
+    if JWT_SECRET is None:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="JWT secret not configured",
+        )
     try:
         token = credentials.credentials
-
-        print("Verifying token:", token)  # Debugging line
-        print("Using JWT_SECRET:", JWT_SECRET)  # Debugging line
 
         # Decode the JWT token using the same secret as NextAuth
         payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
@@ -48,7 +50,7 @@ async def verify_token(
             )
 
         return User(user_id=user_id, username=username, email=email)
-
+    
     except JWTError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
