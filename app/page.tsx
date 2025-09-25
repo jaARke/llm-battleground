@@ -1,37 +1,35 @@
-"use client";
+'use client'
 
-import { useState, useEffect } from "react";
-import AuthComponent from "../components/AuthComponent";
+import { useState, useEffect } from 'react'
+import AuthComponent from '../components/AuthComponent'
 
 export default function Home() {
-  const [displayText, setDisplayText] = useState("");
-  const [showSubtext, setShowSubtext] = useState(false);
-  const fullText = "LLM Battleground";
-  
+  const [displayText, setDisplayText] = useState('')
+  const [showSubtext, setShowSubtext] = useState(false)
+  const fullText = 'LLM Battleground'
+
   useEffect(() => {
-    let index = 0;
+    let index = 0
     const timer = setInterval(() => {
       if (index < fullText.length) {
-        setDisplayText(fullText.slice(0, index + 1));
-        index++;
+        setDisplayText(fullText.slice(0, index + 1))
+        index++
       } else {
-        clearInterval(timer);
+        clearInterval(timer)
         // Show subtext after main text is complete
-        setTimeout(() => setShowSubtext(true), 500);
+        setTimeout(() => setShowSubtext(true), 500)
       }
-    }, 100); // 100ms delay between characters
-    
-    return () => clearInterval(timer);
-  }, []);
+    }, 100) // 100ms delay between characters
+
+    return () => clearInterval(timer)
+  }, [])
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-start bg-gray-50 dark:bg-gray-900 p-4 pt-32">
       <div className="flex flex-col items-center space-y-8">
         {/* Construction emoji */}
-        <div className="text-8xl">
-          🚧
-        </div>
-        
+        <div className="text-8xl">🚧</div>
+
         {/* Main title with typewriter effect */}
         <div className="text-center space-y-4">
           <h1 className="text-4xl font-bold text-gray-800 dark:text-gray-100">
@@ -57,5 +55,5 @@ export default function Home() {
         </div>
       </div>
     </main>
-  );
+  )
 }
