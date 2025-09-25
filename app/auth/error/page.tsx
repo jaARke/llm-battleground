@@ -20,15 +20,19 @@ type ErrorKey =
   | 'SessionRequired'
 
 const ERROR_MESSAGES: Record<ErrorKey, string> = {
-  Configuration: 'There is a misconfiguration with the authentication service. Please contact support.',
-  AccessDenied: 'You do not have access to sign in with this account. Try a different provider.',
+  Configuration:
+    'There is a misconfiguration with the authentication service. Please contact support.',
+  AccessDenied:
+    'You do not have access to sign in with this account. Try a different provider.',
   Verification: 'Your sign-in link may have expired or already been used.',
   Default: 'An unexpected error occurred during sign-in. Please try again.',
   OAuthSignin: 'We could not initiate the provider sign-in. Please try again.',
-  OAuthCallback: 'We could not complete the provider sign-in. Please try again.',
+  OAuthCallback:
+    'We could not complete the provider sign-in. Please try again.',
   OAuthCreateAccount: 'We could not create an account with this provider.',
   EmailCreateAccount: 'There was an issue creating an email-based account.',
-  Callback: 'There was an issue handling the sign-in callback. Please try again.',
+  Callback:
+    'There was an issue handling the sign-in callback. Please try again.',
   OAuthAccountNotLinked:
     'This email is already associated with another account. Sign in using your original provider.',
   EmailSignin: 'We could not send the sign-in email. Please try again later.',
@@ -54,10 +58,14 @@ export default function AuthErrorPage({ searchParams }: ErrorPageProps) {
           <p className="text-sm uppercase tracking-[0.35em] text-red-500 dark:text-red-400">
             Sign in glitch
           </p>
-          <h1 className="text-3xl font-semibold text-gray-900 dark:text-gray-100">Something went wrong</h1>
+          <h1 className="text-3xl font-semibold text-gray-900 dark:text-gray-100">
+            Something went wrong
+          </h1>
         </header>
 
-        <p className="text-base text-center text-rose-600 dark:text-red-400">{message}</p>
+        <p className="text-base text-center text-rose-600 dark:text-red-400">
+          {message}
+        </p>
 
         <div className="space-y-4 text-sm text-center text-gray-600 dark:text-gray-400">
           <p>Retry your provider sign-in and make sure popups are allowed.</p>

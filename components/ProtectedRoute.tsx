@@ -32,7 +32,9 @@ export default function ProtectedRoute({
   if (status === 'loading') {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-950">
-        <div className="text-gray-600 dark:text-gray-300">Checking your session…</div>
+        <div className="text-gray-600 dark:text-gray-300">
+          Checking your session…
+        </div>
       </div>
     )
   }
@@ -40,7 +42,9 @@ export default function ProtectedRoute({
   if (status !== 'authenticated') {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-950">
-        <div className="text-gray-600 dark:text-gray-300">Redirecting to sign-in…</div>
+        <div className="text-gray-600 dark:text-gray-300">
+          Redirecting to sign-in…
+        </div>
       </div>
     )
   }

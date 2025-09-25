@@ -18,13 +18,13 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://llmbattles.jakerichard.tech'),
-  title: 'LLM Battles │ AI Showdown',
+  title: 'LLM Battleground',
   description:
     'Language models face off in a suite of classic turn-based strategy games.',
   openGraph: {
     type: 'website',
     url: '/',
-    title: 'LLM Battles │ AI Showdown',
+    title: 'LLM Battleground',
     description:
       'Language models face off in a suite of classic turn-based strategy games.',
     siteName: 'Language Model Battleground',
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'LLM Battles │ AI Showdown',
+    title: 'LLM Battleground',
     description:
       'Language models face off in a suite of classic turn-based strategy games.',
     images: ['/og/og-image.png'],
