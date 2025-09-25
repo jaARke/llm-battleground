@@ -8,7 +8,7 @@ declare module 'next-auth' {
       email: string
       name: string
     }
-    accessToken: string
+    fastApiToken: string
   }
 
   interface User {
@@ -23,7 +23,7 @@ declare module 'next-auth/jwt' {
     sub?: string
     email?: string
     name?: string
-    backendToken?: string
-    backendTokenExp?: number // unix seconds
+    fastApiToken?: string
+    fastApiTokenExpiry?: number // unix seconds
   }
 }

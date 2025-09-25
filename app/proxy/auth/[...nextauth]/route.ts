@@ -57,22 +57,21 @@ const authOptions: NextAuthOptions = {
         token.name = user.name
 
         const { token: t, exp } = await mintBackendToken(token)
-        token.backendToken = t
-        token.backendTokenExpiry = exp
+        token.fastApiToken = t
+        token.fastApiTokenExpiry = exp
       }
       // Pre-existing access
-      // Check if backend token needs refresh (with buffer)
+      // Check if Fast API token needs refresh (with buffer)
       const shouldRefresh =
-        !token.backendTokenExpiry ||
-        Date.now() >
-          (token.backendTokenExpiry as number) -
-            BACKEND_TOKEN_REFRESH_BUFFER * 1000
+        !token.fastApiTokenExpiry ||
+        Math.floor(Date.now() / 1000) >
+          (token.fastApiTokenExpiry as number) - BACKEND_TOKEN_REFRESH_BUFFER
 
       if (shouldRefresh && token.sub) {
-        // Refresh the backend token
+        // Refresh the Fast API token
         const { token: t, exp } = await mintBackendToken(token)
-        token.backendToken = t
-        token.backendTokenExpiry = exp
+        token.fastApiToken = t
+        token.fastApiTokenExpiry = exp
       }
 
       return token
@@ -85,7 +84,7 @@ const authOptions: NextAuthOptions = {
           email: token.email as string,
           name: token.name as string,
         }
-        session.accessToken = token.backendToken as string
+        session.fastApiToken = token.fastApiToken as string
       }
       return session
     },

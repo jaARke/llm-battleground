@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { signIn, signOut, useSession } from 'next-auth/react'
-import apiClient from '@/lib/apiClient'
+import fastApiClient from '@/lib/fastApiClient'
 
 interface ProtectedResponse {
   message: string
@@ -45,7 +45,7 @@ export default function AuthComponent() {
     setApiResponse(null)
 
     try {
-      const response = await apiClient.get('/api/py/protected')
+      const response = await fastApiClient.get('/protected')
       setApiResponse(response.data)
     } catch (error: any) {
       console.error('Protected endpoint error:', error)
