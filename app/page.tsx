@@ -1,7 +1,6 @@
 'use client'
 
 import Link from 'next/link'
-import ProtectedRoute from '@/components/ProtectedRoute'
 
 const CARD_CLASSNAMES =
   'w-full max-w-3xl mx-auto bg-white/85 dark:bg-gray-900/85 backdrop-blur rounded-3xl shadow-xl border border-gray-200/70 dark:border-gray-800/70 p-10 md:p-14 space-y-10'
