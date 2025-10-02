@@ -19,6 +19,10 @@ const buttonVariants = cva(
         ghost:
           'hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50',
         link: 'text-primary underline-offset-4 hover:underline',
+        'glass-primary': 
+          'rounded-2xl border border-primary/60 bg-gradient-to-r from-[var(--gradient-primary-start)] via-[var(--gradient-primary-via)] to-[var(--gradient-primary-end)] px-5 py-3 text-sm font-semibold tracking-wide text-white shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 hover:opacity-90',
+        'glass-secondary':
+          'rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-secondary)] px-5 py-3 text-sm font-semibold tracking-wide text-foreground shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 hover:bg-[var(--glass-accent)] backdrop-blur',
       },
       size: {
         default: 'h-9 px-4 py-2 has-[>svg]:px-3',

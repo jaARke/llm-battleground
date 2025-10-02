@@ -73,7 +73,7 @@
   /* Enhanced dark mode glassmorphism theme */
   --background: oklch(0.08 0.01 240);
   --foreground: oklch(0.95 0.005 240);
-  --card: oklch(0.12 0.01 240 / 0.8);
+  --card: oklch(0.16 0.005 240 / 0.85);
   --card-foreground: oklch(0.95 0.005 240);
   --popover: oklch(0.1 0.01 240 / 0.9);
   --popover-foreground: oklch(0.95 0.005 240);
@@ -92,12 +92,12 @@
   --ring: oklch(0.65 0.18 250);
 
   /* Enhanced dark glassmorphism specific colors */
-  --glass-primary: oklch(0.12 0.01 240 / 0.8);
-  --glass-secondary: oklch(0.1 0.01 240 / 0.7);
-  --glass-accent: oklch(0.15 0.01 240 / 0.6);
+  --glass-primary: oklch(0.16 0.005 240 / 0.85);
+  --glass-secondary: oklch(0.14 0.005 240 / 0.8);
+  --glass-accent: oklch(0.18 0.005 240 / 0.7);
   --glass-border: oklch(0.25 0.01 240 / 0.7);
-  --glass-panel: oklch(0.12 0.01 240 / 0.85);
-  --glass-card: oklch(0.1 0.01 240 / 0.7);
+  --glass-panel: oklch(0.16 0.005 240 / 0.9);
+  --glass-card: oklch(0.11 0.005 240 / 0.8);
 
   /* Enhanced dark gradient colors */
   --gradient-primary-start: oklch(0.65 0.18 250);
@@ -201,99 +201,15 @@
   body {
     @apply bg-background text-foreground;
   }
+}
 
-  /* Main panel styles - used for large content areas */
-  .glass-panel {
-    @apply rounded-3xl border border-glass-border bg-glass-panel shadow-xl shadow-gray-200/40 dark:shadow-none backdrop-blur;
-  }
-
-  /* Card styles - used for individual content blocks */
-  .glass-card {
-    @apply rounded-2xl border border-glass-border bg-glass-card shadow-sm backdrop-blur transition hover:shadow-md;
-  }
-
-  /* Primary button with gradient background */
-  .glass-button-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-2xl border border-primary/60 bg-gradient-to-r from-gradient-primary-start via-gradient-primary-via to-gradient-primary-end px-5 py-3 text-sm font-semibold tracking-wide text-white shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2;
-  }
-
-  /* Secondary button with glass effect */
-  .glass-button-secondary {
-    @apply inline-flex items-center justify-center gap-2 rounded-2xl border border-glass-border bg-glass-secondary px-5 py-3 text-sm font-semibold tracking-wide text-foreground shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2;
-  }
-
-  /* Status badges */
-  .glass-badge {
-    @apply inline-flex items-center rounded-full border border-primary/60 bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.35em] text-primary;
-  }
-
-  /* Small stat cards */
-  .glass-stat-card {
-    @apply rounded-2xl border border-glass-border bg-glass-accent px-4 py-3;
-  }
-
-  /* Filter buttons */
-  .glass-filter-button {
-    @apply rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-widest transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2;
-  }
-
-  .glass-filter-button-active {
-    @apply border-primary/70 bg-primary/90 text-primary-foreground shadow;
-  }
-
-  .glass-filter-button-inactive {
-    @apply border-glass-border bg-glass-secondary text-muted-foreground hover:border-primary/30 hover:text-primary;
-  }
-
-  /* Background gradients */
+@layer components {
+  /* Background gradients - keeping these as utility classes */
   .gradient-bg-primary {
     @apply bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950;
   }
 
   .gradient-bg-secondary {
     @apply bg-gradient-to-br from-slate-100 via-white to-slate-200 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950;
-  }
-
-  /* Progress bars with gradients */
-  .glass-progress-bar {
-    @apply h-3 w-full overflow-hidden rounded-full bg-glass-border;
-  }
-
-  .glass-progress-fill-primary {
-    @apply h-full bg-gradient-to-r from-gradient-primary-start via-gradient-primary-via to-gradient-primary-end;
-  }
-
-  .glass-progress-fill-success {
-    @apply h-full bg-gradient-to-r from-gradient-success-start via-gradient-success-via to-gradient-success-end;
-  }
-
-  .glass-progress-fill-warning {
-    @apply h-full bg-gradient-to-r from-gradient-warning-start via-gradient-warning-via to-gradient-warning-end;
-  }
-
-  /* Chart bars */
-  .glass-chart-bar-primary {
-    @apply bg-gradient-to-t from-gradient-primary-start via-gradient-primary-via to-gradient-primary-end opacity-80;
-  }
-
-  .glass-chart-bar-success {
-    @apply bg-gradient-to-t from-gradient-success-start via-gradient-success-via to-gradient-success-end opacity-80;
-  }
-
-  .glass-chart-bar-warning {
-    @apply bg-gradient-to-t from-gradient-warning-start via-gradient-warning-via to-gradient-warning-end opacity-80;
-  }
-
-  /* Status pills */
-  .glass-status-accepted {
-    @apply bg-emerald-100/80 text-emerald-600 border-emerald-200/70 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-900/60;
-  }
-
-  .glass-status-pending {
-    @apply bg-amber-100/70 text-amber-600 border-amber-200/70 dark:bg-amber-950/40 dark:text-amber-400 dark:border-amber-900/60;
-  }
-
-  .glass-status-declined {
-    @apply bg-rose-100/70 text-rose-600 border-rose-200/70 dark:bg-rose-950/40 dark:text-rose-400 dark:border-rose-900/60;
   }
 }
