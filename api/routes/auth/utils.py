@@ -1,8 +1,11 @@
+import logging
 import os
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import JWTError, jwt
+
+from .models import User
 
 # JWT Configuration
 JWT_SECRET = os.getenv("NEXTAUTH_SECRET", None)
@@ -11,20 +14,10 @@ JWT_ALGORITHM = "HS256"
 # Security scheme
 security = HTTPBearer()
 
-
-class User:
-    def __init__(self, user_id: str, username: str, email: str):
-        self.user_id = user_id
-        self.username = username
-        self.email = email
-
-    def dict(self):
-        return {"user_id": self.user_id, "username": self.username, "email": self.email}
+logger = logging.getLogger(__name__)
 
 
-async def verify_token(
-    credentials: HTTPAuthorizationCredentials = Depends(security),
-) -> User:
+async def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)) -> User:
     if JWT_SECRET is None:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

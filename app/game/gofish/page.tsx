@@ -10,43 +10,51 @@ interface GameState {
 
 export default function GoFishPage() {
   const [gameState, setGameState] = useState<GameState | null>(null)
-  const [gameId, setGameId] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    // Create a new game on initial load
-    createGame()
+    // Try to fetch existing game state first
+    fetchGameState()
   }, [])
-
-  useEffect(() => {
-    // Fetch initial game state if gameId is present
-    if (gameId) {
-      fetchGameState()
-    }
-  }, [gameId])
 
   const createGame = async () => {
     setLoading(true)
     setError(null)
     try {
-      const response = await fastApiClient.get('/game/gofish/create')
-      setGameId(response.data.game_id)
+      await fastApiClient.get('/game/gofish/create')
+      // Fetch the new game state after creation
+      await fetchGameStateInternal()
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Failed to create game')
+      const errorMessage = typeof err.response?.data?.detail === 'string' 
+        ? err.response.data.detail 
+        : err.response?.data?.detail?.[0]?.msg || err.message || 'Failed to create game'
+      setError(errorMessage)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const fetchGameStateInternal = async () => {
+    try {
+      const response = await fastApiClient.get('/game/gofish/state')
+      setGameState(response.data)
+    } catch (err: any) {
+      // Silently fail for internal calls (like after create)
+      setGameState(null)
     }
   }
 
   const fetchGameState = async () => {
     setLoading(true)
     setError(null)
+
     try {
-      const response = await fastApiClient.get('/game/gofish/state?game_id=' + gameId)
+      const response = await fastApiClient.get('/game/gofish/state')
       setGameState(response.data)
     } catch (err: any) {
       setError(err.response?.data?.detail || 'Failed to fetch game state')
+      setGameState(null)
     } finally {
       setLoading(false)
     }
@@ -57,7 +65,6 @@ export default function GoFishPage() {
     setError(null)
     try {
       await fastApiClient.get('/game/gofish/end')
-      setGameId(null)
       setGameState(null)
     } catch (err: any) {
       setError(err.response?.data?.detail || 'Failed to end game')
@@ -74,11 +81,11 @@ export default function GoFishPage() {
         <div className="flex flex-col items-center space-y-4">
           <div className="flex space-x-4">
             <Button 
-              onClick={gameId ? endGame : createGame} 
+              onClick={gameState ? endGame : createGame} 
               disabled={loading}
               className="bg-blue-600 hover:bg-blue-700"
             >
-              {loading ? gameId ? 'Ending...' : 'Creating...' : gameId ? 'End Game' : 'Create Game'}
+              {loading ? gameState ? 'Ending...' : 'Creating...' : gameState ? 'End Game' : 'Create Game'}
             </Button>
             <Button 
               onClick={fetchGameState} 
@@ -95,9 +102,9 @@ export default function GoFishPage() {
             </div>
           )}
 
-          {gameId && (
+          {gameState && (
             <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded max-w-lg">
-              Game ID: {gameId}
+              Game Active
             </div>
           )}
         </div>

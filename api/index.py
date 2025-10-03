@@ -9,8 +9,12 @@ load_dotenv(dotenv_path=Path(__file__).parent.parent / ".env.local")
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from .routes.health import health_router
 from .routes.game import gofish_router
+from .routes.health import health_router
+from .utils import init_logging
+
+# Initialize logging
+init_logging()
 
 # Create FastAPI instance with custom docs and openapi url
 app = FastAPI(
