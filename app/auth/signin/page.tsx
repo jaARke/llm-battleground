@@ -3,20 +3,36 @@
 import { useState } from 'react'
 import { signIn } from 'next-auth/react'
 import { useSearchParams } from 'next/navigation'
-const CARD_CLASSNAMES =
-  'w-full max-w-lg mx-auto bg-white/85 dark:bg-gray-900/90 backdrop-blur rounded-3xl shadow-xl border border-gray-200/80 dark:border-gray-800/80 p-10 md:p-12 space-y-8'
-const BUTTON_BASE_CLASSES =
-  'relative w-full flex items-center justify-center gap-3 rounded-2xl px-6 py-4 text-base font-semibold tracking-wide text-white transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2'
+import { Loader2 } from 'lucide-react'
 
-const providers = [
+import { Button } from '@/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { cn } from '@/lib/utils'
+
+type ProviderId = 'github' | 'google' | 'discord'
+
+const providers: Array<{
+  id: ProviderId
+  label: string
+  className: string
+  icon: JSX.Element
+}> = [
   {
     id: 'github',
     label: 'Continue with GitHub',
     className:
-      'bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700 hover:from-gray-800 hover:to-gray-600 disabled:opacity-70 focus-visible:ring-gray-500',
+      'bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700 text-white hover:from-gray-800 hover:via-gray-700 hover:to-gray-600 focus-visible:ring-gray-500',
     icon: (
       <svg
-        className="w-5 h-5"
+        className="size-5"
         viewBox="0 0 24 24"
         fill="currentColor"
         aria-hidden
@@ -29,10 +45,10 @@ const providers = [
     id: 'google',
     label: 'Continue with Google',
     className:
-      'bg-gradient-to-r from-red-500 via-orange-500 to-blue-500 hover:from-red-500 hover:to-indigo-500 disabled:opacity-70 focus-visible:ring-red-500',
+      'bg-gradient-to-r from-red-500 via-orange-500 to-blue-500 text-white hover:from-red-500 hover:via-orange-400 hover:to-indigo-500 focus-visible:ring-red-500',
     icon: (
       <svg
-        className="w-5 h-5"
+        className="size-5"
         viewBox="0 0 24 24"
         fill="currentColor"
         aria-hidden
@@ -48,10 +64,10 @@ const providers = [
     id: 'discord',
     label: 'Continue with Discord',
     className:
-      'bg-gradient-to-r from-indigo-500 via-purple-500 to-blue-600 hover:from-indigo-500 hover:to-blue-500 disabled:opacity-70 focus-visible:ring-indigo-500',
+      'bg-gradient-to-r from-indigo-500 via-purple-500 to-blue-600 text-white hover:from-indigo-500 hover:via-purple-500 hover:to-blue-500 focus-visible:ring-indigo-500',
     icon: (
       <svg
-        className="w-5 h-5"
+        className="size-5"
         viewBox="0 0 24 24"
         fill="currentColor"
         aria-hidden
@@ -65,12 +81,13 @@ const providers = [
 export default function SignInPage() {
   const searchParams = useSearchParams()
   const callbackUrl = searchParams.get('callbackUrl') ?? '/'
-  const [activeProvider, setActiveProvider] = useState<string | null>(null)
+  const [activeProvider, setActiveProvider] = useState<ProviderId | null>(null)
   const [error, setError] = useState<string | null>(null)
 
-  const handleProviderSignIn = async (provider: string) => {
+  const handleProviderSignIn = async (provider: ProviderId) => {
     setError(null)
     setActiveProvider(provider)
+
     try {
       await signIn(provider, { callbackUrl })
     } catch (err) {
@@ -81,60 +98,74 @@ export default function SignInPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 flex items-center justify-center px-6 py-12">
-      <div className={CARD_CLASSNAMES}>
-        <header className="space-y-3 text-center">
-          <p className="text-sm uppercase tracking-[0.35em] text-blue-500 dark:text-blue-400">
+    <main className="min-h-screen gradient-bg-primary flex items-center justify-center px-6 py-12">
+      <Card variant="glass-panel" className="w-full max-w-xl mx-auto">
+        <CardHeader className="space-y-3 text-center p-0">
+          <p className="text-sm uppercase tracking-[0.35em] text-primary">
             LLM Battleground
           </p>
-          <h1 className="text-3xl font-semibold text-gray-900 dark:text-gray-100">
+          <CardTitle className="text-3xl font-semibold text-foreground">
             Access your command center
-          </h1>
-          <p className="text-base text-gray-600 dark:text-gray-400">
+          </CardTitle>
+          <CardDescription className="text-base text-muted-foreground">
             Choose the provider you already trust to continue.
-          </p>
-        </header>
+          </CardDescription>
+        </CardHeader>
 
-        <div className="space-y-4">
+        <CardContent className="space-y-4 p-0">
           {providers.map((provider) => (
-            <button
+            <Button
               key={provider.id}
+              variant="oauth"
               type="button"
               onClick={() => handleProviderSignIn(provider.id)}
+              aria-busy={activeProvider === provider.id}
               disabled={
                 activeProvider !== null && activeProvider !== provider.id
               }
-              className={`${BUTTON_BASE_CLASSES} ${provider.className}`}
+              className={cn(
+                provider.className,
+                'transition-all disabled:opacity-70 disabled:saturate-75'
+              )}
             >
-              <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/10 backdrop-blur">
-                {provider.icon}
+              <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-white/10 backdrop-blur">
+                {activeProvider === provider.id ? (
+                  <Loader2 className="size-5 animate-spin" aria-hidden />
+                ) : (
+                  provider.icon
+                )}
               </span>
               <span className="flex-1 text-center">
                 {activeProvider === provider.id
                   ? 'Signing in…'
                   : provider.label}
               </span>
-            </button>
+            </Button>
           ))}
-        </div>
 
-        {error && (
-          <p className="mt-4 text-sm text-center text-red-600 dark:text-red-400">
-            {error}
-          </p>
-        )}
+          {error && (
+            <Alert
+              variant="destructive"
+              className="border-destructive/40 bg-destructive/10 text-destructive"
+            >
+              <AlertDescription>
+                {error}
+              </AlertDescription>
+            </Alert>
+          )}
+        </CardContent>
 
-        <p className="text-sm text-center text-gray-500 dark:text-gray-500">
+        <CardFooter className="justify-center text-center text-sm text-muted-foreground p-0">
           Trouble signing in? Email{' '}
           <a
             href="mailto:me@jakerichard.tech"
-            className="text-blue-600 dark:text-blue-400 font-medium"
+            className="ml-1 text-primary font-medium"
           >
             me@jakerichard.tech
           </a>
           .
-        </p>
-      </div>
+        </CardFooter>
+      </Card>
     </main>
   )
 }

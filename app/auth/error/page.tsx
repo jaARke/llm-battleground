@@ -1,7 +1,17 @@
 import Link from 'next/link'
+import { AlertCircle } from 'lucide-react'
 
-const CARD_CLASSNAMES =
-  'w-full max-w-lg mx-auto bg-white/85 dark:bg-gray-900/90 backdrop-blur rounded-3xl shadow-xl border border-gray-200/80 dark:border-red-900/40 p-10 md:p-12 space-y-8'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 
 type ErrorKey =
   | 'Configuration'
@@ -41,6 +51,23 @@ const ERROR_MESSAGES: Record<ErrorKey, string> = {
   SessionRequired: 'You need to sign in before accessing this page.',
 }
 
+const ERROR_TITLES: Record<ErrorKey, string> = {
+  Configuration: 'Configuration issue',
+  AccessDenied: 'Access denied',
+  Verification: 'Verification required',
+  Default: 'Unexpected error',
+  OAuthSignin: 'Provider sign-in failed',
+  OAuthCallback: 'Provider callback failed',
+  OAuthCreateAccount: 'Provider account not created',
+  EmailCreateAccount: 'Email account unavailable',
+  Callback: 'Callback issue',
+  OAuthAccountNotLinked: 'Provider account mismatch',
+  EmailSignin: 'Email sign-in failed',
+  CredentialsSignin: 'Credentials rejected',
+  CredentialsCallback: 'Credentials validation failed',
+  SessionRequired: 'Sign-in required',
+}
+
 interface ErrorPageProps {
   searchParams: {
     error?: string
@@ -49,45 +76,65 @@ interface ErrorPageProps {
 
 export default function AuthErrorPage({ searchParams }: ErrorPageProps) {
   const errorKey = (searchParams.error as ErrorKey | undefined) ?? 'Default'
-  const message = ERROR_MESSAGES[errorKey] ?? ERROR_MESSAGES.Default
+  const errorMessage = ERROR_MESSAGES[errorKey] ?? ERROR_MESSAGES.Default
+  const errorTitle = ERROR_TITLES[errorKey] ?? ERROR_TITLES.Default
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 flex items-center justify-center px-6 py-12">
-      <div className={CARD_CLASSNAMES}>
-        <header className="space-y-3 text-center">
-          <p className="text-sm uppercase tracking-[0.35em] text-red-500 dark:text-red-400">
+    <main className="min-h-screen gradient-bg-primary flex items-center justify-center px-6 py-12">
+      <Card variant="glass-panel" className="w-full max-w-xl mx-auto space-y-8">
+        <CardHeader className="space-y-3 text-center p-0">
+          <Badge
+            variant="glass"
+            className="mx-auto border-destructive/40 text-destructive"
+          >
             Sign in glitch
-          </p>
-          <h1 className="text-3xl font-semibold text-gray-900 dark:text-gray-100">
+          </Badge>
+          <CardTitle className="text-3xl font-semibold text-foreground">
             Something went wrong
-          </h1>
-        </header>
+          </CardTitle>
+          <CardDescription className="text-base text-muted-foreground">
+            We hit a snag connecting to your provider. Check the message below
+            and try again.
+          </CardDescription>
+        </CardHeader>
 
-        <p className="text-base text-center text-rose-600 dark:text-red-400">
-          {message}
-        </p>
+        <CardContent className="space-y-4 p-0">
+          <Alert
+            variant="destructive"
+            className="border-destructive/40 bg-destructive/10 text-destructive"
+          >
+            <AlertCircle className="size-4" aria-hidden />
+            <AlertTitle className="text-sm font-semibold">
+              {errorTitle}
+            </AlertTitle>
+            <AlertDescription>
+              <p>{errorMessage}</p>
+            </AlertDescription>
+          </Alert>
 
-        <div className="space-y-4 text-sm text-center text-gray-600 dark:text-gray-400">
-          <p>Retry your provider sign-in and make sure popups are allowed.</p>
-          <p>
-            If the problem continues, email{' '}
-            <a
-              href="mailto:me@jakerichard.tech"
-              className="text-blue-600 dark:text-blue-400 font-medium"
-            >
-              me@jakerichard.tech
-            </a>{' '}
-            with a screenshot of this page.
-          </p>
-        </div>
+          <div className="space-y-3 text-sm text-muted-foreground text-center">
+            <p>Retry your provider sign-in and make sure popups are allowed.</p>
+            <p>
+              If the problem continues, email{' '}
+              <a
+                href="mailto:me@jakerichard.tech"
+                className="text-primary font-medium"
+              >
+                me@jakerichard.tech
+              </a>{' '}
+              with a screenshot of this page.
+            </p>
+          </div>
+        </CardContent>
 
-        <Link
-          href="/auth/signin"
-          className="inline-flex justify-center items-center w-full py-3 px-4 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
-        >
-          Try signing in again
-        </Link>
-      </div>
+        <CardFooter className="p-0">
+          <Button variant="glass-primary" className="w-full" asChild>
+            <Link href="/auth/signin">
+              Try signing in again
+            </Link>
+          </Button>
+        </CardFooter>
+      </Card>
     </main>
   )
 }

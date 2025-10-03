@@ -10,7 +10,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .routes.health import health_router
-from .routes.protected import protected_router
+from .routes.game import gofish_router
 
 # Create FastAPI instance with custom docs and openapi url
 app = FastAPI(
@@ -36,4 +36,4 @@ app.add_middleware(
 
 # Include routers
 app.include_router(health_router)
-app.include_router(protected_router)
+app.include_router(gofish_router)

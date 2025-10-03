@@ -1,5 +1,4 @@
 import os
-from typing import Optional
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
@@ -14,7 +13,7 @@ security = HTTPBearer()
 
 
 class User:
-    def __init__(self, user_id: str, username: str, email: Optional[str] = None):
+    def __init__(self, user_id: str, username: str, email: str):
         self.user_id = user_id
         self.username = username
         self.email = email
@@ -42,7 +41,7 @@ async def verify_token(
         user_id = payload.get("sub")  # NextAuth uses 'sub' for user ID
         email = payload.get("email")
 
-        if username is None or user_id is None:
+        if username is None or user_id is None or email is None:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid authentication credentials",
@@ -50,7 +49,7 @@ async def verify_token(
             )
 
         return User(user_id=user_id, username=username, email=email)
-    
+
     except JWTError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

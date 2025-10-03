@@ -23,6 +23,8 @@ const buttonVariants = cva(
           'rounded-2xl border border-primary/60 bg-gradient-to-r from-[var(--gradient-primary-start)] via-[var(--gradient-primary-via)] to-[var(--gradient-primary-end)] px-5 py-3 text-sm font-semibold tracking-wide text-white shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 hover:opacity-90',
         'glass-secondary':
           'rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-secondary)] px-5 py-3 text-sm font-semibold tracking-wide text-foreground shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 hover:bg-[var(--glass-accent)] backdrop-blur',
+        oauth:
+          'relative w-full min-h-[4rem] justify-center gap-4 rounded-2xl px-6 py-4 text-base font-semibold tracking-wide shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
       },
       size: {
         default: 'h-9 px-4 py-2 has-[>svg]:px-3',

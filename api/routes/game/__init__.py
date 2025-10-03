@@ -1,0 +1,1 @@
+from .gofish import gofish_router
