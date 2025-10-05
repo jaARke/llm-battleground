@@ -24,7 +24,7 @@ async function mintBackendToken(claims: {
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt(now)
     .setExpirationTime(exp)
-    .sign(new TextEncoder().encode(process.env.NEXTAUTH_SECRET!))
+    .sign(new TextEncoder().encode(process.env.FASTAPI_JWT_SECRET!))
 
   return { token, exp }
 }

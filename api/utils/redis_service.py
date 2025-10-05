@@ -45,7 +45,7 @@ def reset_game_expiration(func: Callable) -> Callable:
 class RedisService(ABC):
     GAME_COUNT_KEY = "game_count:{user_email}"
 
-    RATE_WINDOW_SECONDS = int(os.getenv("RATE_WINDOW_SECONDS", 86400))
+    MAX_GAME_WINDOW_SECONDS = int(os.getenv("MAX_GAME_WINDOW_SECONDS", 86400))
     MAX_GAMES_PER_WINDOW = int(os.getenv("MAX_GAMES_PER_WINDOW", 5))
 
     def __init__(self, logger_instance: Optional[logging.Logger] = None) -> None:
@@ -84,14 +84,14 @@ class RedisService(ABC):
         current_count = self.get_game_count(user_email)
         new_count = current_count + 1
         ttl = self.client.ttl(key)
-        ttl = int(ttl) if isinstance(ttl, int) else self.RATE_WINDOW_SECONDS
-        expiration = ttl if ttl > 0 else self.RATE_WINDOW_SECONDS
+        ttl = int(ttl) if isinstance(ttl, int) else self.MAX_GAME_WINDOW_SECONDS
+        expiration = ttl if ttl > 0 else self.MAX_GAME_WINDOW_SECONDS
 
         if new_count > self.MAX_GAMES_PER_WINDOW:
             self.logger.warning("User %s has exceeded the maximum game limit", user_email)
             raise GameLimitExceededError(
                 f"User {user_email} has exceeded the maximum of {self.MAX_GAMES_PER_WINDOW} games"
-                f" in the last {self.RATE_WINDOW_SECONDS} seconds. The limit will reset in {ttl}"
+                f" in the last {self.MAX_GAME_WINDOW_SECONDS} seconds. The limit will reset in {ttl}"
                 " seconds."
             )
 

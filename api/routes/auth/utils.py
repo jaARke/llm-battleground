@@ -8,7 +8,7 @@ from jose import JWTError, jwt
 from .models import User
 
 # JWT Configuration
-JWT_SECRET = os.getenv("NEXTAUTH_SECRET", None)
+JWT_SECRET = os.getenv("FASTAPI_JWT_SECRET", None)
 JWT_ALGORITHM = "HS256"
 
 # Security scheme
