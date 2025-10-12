@@ -2,22 +2,24 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from ....core.gofish import gofish_redis_service
 from ....core.gofish.models import GoFishGameState
-from ....utils import (
+from ....utils.exceptions import (
     GameInProgressError,
     GameLimitExceededError,
     GameNotFoundError,
 )
 from ...auth.utils import User, get_current_user
+from .models import CreateGoFishGameRequest
 
 router = APIRouter(prefix="/api/py/game/gofish", tags=["gofish"])
 
 
-@router.get("/create", status_code=204)
+@router.post("/create")
 async def create_game(
+    request: CreateGoFishGameRequest,
     current_user: User = Depends(get_current_user),
-) -> None:
+) -> GoFishGameState:
     try:
-        gofish_redis_service.create_game(current_user.email)
+        return gofish_redis_service.create_game(current_user.email, request.players, request.params)
     except GameInProgressError as e:
         raise HTTPException(status_code=409, detail="Game already in progress")
     except GameLimitExceededError as e:

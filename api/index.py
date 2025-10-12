@@ -9,7 +9,8 @@ load_dotenv(dotenv_path=Path(__file__).parent.parent / ".env.local")
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from .routes.game import gofish_router
+from .routes.game import game_router
+from .routes.game.gofish import gofish_router
 from .routes.health import health_router
 from .utils import init_logging
 
@@ -20,7 +21,7 @@ init_logging()
 app = FastAPI(
     title="LLM Battleground API",
     description="API for LLM Battleground application",
-    version="0.2.0",
+    version="0.1.0",
     docs_url="/api/py/docs",
     openapi_url="/api/py/openapi.json",
 )
@@ -40,4 +41,5 @@ app.add_middleware(
 
 # Include routers
 app.include_router(health_router)
+app.include_router(game_router)
 app.include_router(gofish_router)
